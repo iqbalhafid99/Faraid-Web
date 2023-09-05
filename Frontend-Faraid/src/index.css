@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Berkshire Swash";
+  src: url("./assets/fonts/Berkshire-Swash.ttf");
+}
+
+@font-face {
+  font-family: "Airbnb Cereal";
+  src: url("./assets/fonts/AirbnbCereal_W_Md.otf");
+}
