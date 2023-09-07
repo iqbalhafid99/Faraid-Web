@@ -6,6 +6,7 @@ import Hasil from "../pages/Hasil";
 import Keilmuan from "../pages/Keilmuan";
 import Error from "../pages/Error";
 import Admin from "../pages/Admin";
+import Edit from "../pages/Edit";
 
 function routes() {
   return (
@@ -17,6 +18,7 @@ function routes() {
         <Route path="/hasil" element={<Hasil />} />
         <Route path="/keilmuan" element={<Keilmuan />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/edit" element={<Edit />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
