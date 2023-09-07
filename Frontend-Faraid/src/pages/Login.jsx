@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import HouseIcon from "@mui/icons-material/House";
 
 function Login() {
   const navigate = useNavigate();
@@ -28,11 +29,12 @@ function Login() {
       })
       .catch((err) => {
         setError("Sandi atau password salah");
+        console.log(err.message);
       });
   };
 
   return (
-    <div className="bg-primary h-screen w-full flex items-center justify-center">
+    <div className="relative bg-primary h-screen w-full flex items-center justify-center">
       <div className="w-[30%] h-[80%] rounded-lg bg-gray-100">
         <div className="flex items-center flex-col justify-center ">
           <h1 className="text-center mt-16 text-3xl font-semibold text-primary">
@@ -64,6 +66,14 @@ function Login() {
             Masuk
           </button>
         </div>
+      </div>
+      <div className="absolute bottom-10 right-10">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-gray-100 p-4 rounded-full hover:shadow-lg hover:bg-gray-300 transition duration-500"
+        >
+          <HouseIcon className="scale-150 text-primary" />
+        </button>
       </div>
     </div>
   );
