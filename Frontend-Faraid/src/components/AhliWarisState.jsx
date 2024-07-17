@@ -1,19 +1,19 @@
 import { useState } from "react";
 
-export function useAhliWarisState(initialCount) {
-  const [count, setCount] = useState(initialCount);
+export function useAhliWarisState(initialValue, maxCount = Infinity) {
+  const [count, setCount] = useState(initialValue);
 
-  function handlePlus() {
-    setCount(count + 1);
-  }
+  const handleMin = () => {
+    setCount((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
+  };
 
-  function handleMin() {
-    setCount(count - 1);
-  }
+  const handlePlus = () => {
+    setCount((prevCount) => (prevCount < maxCount ? prevCount + 1 : maxCount));
+  };
 
   return {
     count,
-    handlePlus,
     handleMin,
+    handlePlus,
   };
 }
