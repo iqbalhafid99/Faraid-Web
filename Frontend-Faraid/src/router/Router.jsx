@@ -16,7 +16,7 @@ function routes() {
         <Route path="/hitung" element={<Hitung />} />
         <Route path="/keilmuan" element={<Keilmuan />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/edit" element={<Edit />} />
+        <Route path="/edit/:id" element={<Edit />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

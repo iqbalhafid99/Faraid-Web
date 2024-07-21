@@ -156,7 +156,7 @@ function Hitung() {
           </div>
           <div className="mt-10">
             <h1 className="text-center text-xl font-semibold">
-              Jumlah Harta warisan
+              Jumlah Harta warisan W6MZvC7DfrUobAbj
             </h1>
             <input
               type="number"

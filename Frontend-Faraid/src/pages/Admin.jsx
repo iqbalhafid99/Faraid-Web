@@ -101,7 +101,7 @@ function Admin() {
                   <th className="border">{index + 1}</th>
                   <td className="border font-bold">{c.title}</td>
                   <td className="border">
-                    <Link to={"/edit"}>
+                    <Link to={`/edit/${c._id}`}>
                       <EditIcon />
                     </Link>
                   </td>
