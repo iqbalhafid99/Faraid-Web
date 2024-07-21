@@ -2,9 +2,10 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useAhliWarisState } from "../components/AhliWarisState";
 import numeral from "numeral";
+import calculateInheritance from "../components/HitunganWaris";
 
 function Hitung() {
-  const [inputValue, setInputValue] = useState(0);
+  const [inputValue, setInputValue] = useState("");
   const [mayitGender, setMayitGender] = useState(null);
   const [results, setResults] = useState([]);
 
@@ -14,43 +15,79 @@ function Hitung() {
   }
 
   const ahliWarisItems = [
-    { label: "Suami", state: useAhliWarisState(0, 1) },
-    { label: "Anak Laki-laki", state: useAhliWarisState(0) },
-    { label: "Cucu lelaki dari anak laki-laki", state: useAhliWarisState(0) },
-    { label: "Ayah", state: useAhliWarisState(0, 1) },
-    { label: "Kakek dari ayah", state: useAhliWarisState(0, 1) },
-    { label: "Saudara laki-laki sekandung", state: useAhliWarisState(0) },
-    { label: "Saudara laki-laki seayah", state: useAhliWarisState(0) },
-    { label: "Saudara laki-laki seibu", state: useAhliWarisState(0) },
+    { label: "Suami", state: useAhliWarisState(0, 1), key: "A3" },
+    { label: "Anak Laki-laki", state: useAhliWarisState(0), key: "A5" },
+    {
+      label: "Cucu lelaki dari anak laki-laki",
+      state: useAhliWarisState(0),
+      key: "B1",
+    },
+    { label: "Ayah", state: useAhliWarisState(0, 1), key: "A1" },
+    { label: "Kakek dari ayah", state: useAhliWarisState(0, 1), key: "B3" },
+    {
+      label: "Saudara laki-laki sekandung",
+      state: useAhliWarisState(0),
+      key: "C1",
+    },
+    {
+      label: "Saudara laki-laki seayah",
+      state: useAhliWarisState(0),
+      key: "C3",
+    },
+    {
+      label: "Saudara laki-laki seibu",
+      state: useAhliWarisState(0),
+      key: "C5",
+    },
     {
       label: "Anak lelaki dari saudara laki-laki yang sekandung",
       state: useAhliWarisState(0),
+      key: "C6",
     },
     {
       label: "Anak lelaki dari saudara laki-laki yang seayah",
       state: useAhliWarisState(0),
+      key: "C7",
     },
-    { label: "Paman sekandung", state: useAhliWarisState(0) },
-    { label: "Paman seayah", state: useAhliWarisState(0) },
-    { label: "Anak lelaki dari paman sekandung", state: useAhliWarisState(0) },
-    { label: "Anak lelaki dari paman seayah", state: useAhliWarisState(0) },
+    { label: "Paman sekandung", state: useAhliWarisState(0), key: "C7" },
+    { label: "Paman seayah", state: useAhliWarisState(0), key: "C8" },
+    {
+      label: "Anak lelaki dari paman sekandung",
+      state: useAhliWarisState(0),
+      key: "C9",
+    },
+    {
+      label: "Anak lelaki dari paman seayah",
+      state: useAhliWarisState(0),
+      key: "C10",
+    },
   ];
 
   const ahliWarisPerempuanItems = [
-    { label: "Istri", state: useAhliWarisState(0, 4) },
-    { label: "Anak perempuan", state: useAhliWarisState(0) },
+    { label: "Istri", state: useAhliWarisState(0, 4), key: "A4" },
+    { label: "Anak perempuan", state: useAhliWarisState(0), key: "A6" },
     {
       label: "Cucu perempuan dari anak laki-laki",
       state: useAhliWarisState(0),
+      key: "B2",
     },
-    { label: "Ibu", state: useAhliWarisState(0, 1) },
-    { label: "Nenek dari ayah", state: useAhliWarisState(0, 1) },
-    { label: "Nenek dari ibu", state: useAhliWarisState(0, 1) },
-    { label: "Saudara perempuan sekandung", state: useAhliWarisState(0) },
-    { label: "Saudara perempuan seayah", state: useAhliWarisState(0) },
+    { label: "Ibu", state: useAhliWarisState(0, 1), key: "A2" },
+    { label: "Nenek dari ayah", state: useAhliWarisState(0, 1), key: "B5" },
+    { label: "Nenek dari ibu", state: useAhliWarisState(0, 1), key: "B6" },
+    {
+      label: "Saudara perempuan sekandung",
+      state: useAhliWarisState(0),
+      key: "C2",
+    },
+    {
+      label: "Saudara perempuan seayah",
+      state: useAhliWarisState(0),
+      key: "C4",
+    },
     {
       label: "Saudara perempuan seibu",
       state: useAhliWarisState(0),
+      key: "C6",
     },
   ];
 
@@ -60,18 +97,30 @@ function Hitung() {
 
   function handleHitung() {
     let newResults = [];
+
     // Gabungkan ahli waris laki-laki dan perempuan jika ada nilai lebih dari nol
     const combinedAhliWarisItems = [
       ...ahliWarisItems,
       ...ahliWarisPerempuanItems,
     ];
 
+    // Buat presence object untuk digunakan dalam calculateInheritance
+    const presence = {};
+    combinedAhliWarisItems.forEach((item) => {
+      if (item.state.count > 0) {
+        presence[item.key] = item.state.count;
+      }
+    });
+
+    // Hitung furudh menggunakan calculateInheritance
+    const furudhResults = calculateInheritance(presence);
+
     newResults = combinedAhliWarisItems
-      .filter((item) => item.state.count > 0) // Filter untuk hanya yang count lebih dari nol
+      .filter((item) => item.state.count > 0 && furudhResults[item.key]) // Filter untuk hanya yang ada dalam furudhResults dan count lebih dari 0
       .map((item) => ({
         label: item.label,
-        furudh: item.state.count / 6, // Ganti dengan informasi furudh yang sesuai
-        hasil: item.state.count * inputValue, // Asumsi: perhitungan contoh, sesuaikan dengan logika Anda
+        furudh: furudhResults[item.key], // Gunakan hasil dari calculateInheritance
+        hasil: inputValue, // Asumsi: perhitungan contoh, sesuaikan dengan logika Anda
       }));
 
     setResults(newResults);
@@ -80,8 +129,8 @@ function Hitung() {
   return (
     <div>
       <Navbar />
-      <div className="bg-primary w-full h-[160vh] flex items-center justify-center">
-        <div className="w-[90%] h-[140vh] rounded-xl bg-gray-100 flex flex-col items-center">
+      <div className="bg-primary w-full h-full flex items-center justify-center">
+        <div className="w-[90%] h-[90%] rounded-xl bg-gray-100 flex flex-col items-center">
           <div>
             <div className="mt-10">
               <h1 className="text-center text-xl font-semibold">Mayit</h1>
@@ -105,15 +154,19 @@ function Hitung() {
               </div>
             </div>
           </div>
+          <div className="mt-10">
+            <h1 className="text-center text-xl font-semibold">
+              Jumlah Harta warisan
+            </h1>
+            <input
+              type="number"
+              value={inputValue}
+              onChange={handleInputChange}
+              className="rounded-lg mt-3 py-3 w-[90%] border-2 border-primary pl-3"
+            />
+          </div>
           <div className="w-full  flex mt-10">
             <div className="flex-1 text-center">
-              <button
-                onClick={() => {
-                  console.log(inputValue);
-                }}
-              >
-                halo
-              </button>
               <div>
                 <h1 className="text-xl font-semibold">Pilih Ahli Waris</h1>
                 <h1 className="text-base text-primary">Laki-laki</h1>
@@ -174,65 +227,45 @@ function Hitung() {
               </div>
             </div>
           </div>
-          <div className=" mt-10">
+          <div className="w-full flex items-center justify-center mt-10">
             <button
               onClick={handleHitung}
-              className="hover:bg-green-700 transition duration-500 hover:shadow-lg hover:scale-105 text-white font-semibold rounded-full bg-primary py-3 px-10 text-center"
+              className="bg-primary px-5 py-2 text-white rounded-lg"
             >
               Hitung
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* hasil */}
-      <div>
-        <div className="bg-primary w-full h-screen flex items-center justify-center">
-          <div className="w-[90%] h-[90%] rounded-xl bg-gray-100 flex flex-col">
-            <div className="ml-20 mt-20">
-              <h1>Jumlah Harta warisan</h1>
-              <input
-                type="text"
-                value={inputValue} // Format angka dengan ribuan
-                onChange={handleInputChange}
-                className="rounded-lg mt-3 py-3 w-[40%] border-2 border-primary pl-2"
-              />
-            </div>
-            <div className="ml-20 mt-10">
-              <h1>Pembagian Harta Waris</h1>
-              <div className="lg:w-[80%] w-full overflow-auto mt-5">
-                <table className="table-auto border w-full text-left whitespace-no-wrap">
-                  <thead className="border">
-                    <tr>
-                      <th className="w-[40%] px-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary text-whit rounded-tl rounded-bl">
-                        Ahli Waris
-                      </th>
-                      <th className="px-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary">
-                        Furudh
-                      </th>
-                      <th className="w-[40%] pl-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary">
-                        Hasil
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((result, index) => (
-                      <tr key={index}>
-                        <td className="border-2 border-gray-200 px-4 py-3">
-                          {result.label}
-                        </td>
-                        <td className="border-2 border-gray-200 px-4 py-3">
-                          {result.furudh}
-                        </td>
-                        <td className="border-2 border-gray-200 px-4 py-3">
-                          Rp. {numeral(result.hasil).format("0,0")}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div className="lg:w-[80%] w-full overflow-auto mt-5 mb-20">
+            <table className="table-auto border w-full text-left whitespace-no-wrap">
+              <thead className="border">
+                <tr>
+                  <th className="w-[40%] px-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary text-whit rounded-tl rounded-bl">
+                    Ahli Waris
+                  </th>
+                  <th className="px-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary">
+                    Furudh
+                  </th>
+                  <th className="w-[40%] pl-4 py-3 title-font tracking-wider border-white border-2 font-medium text-white text-sm bg-primary">
+                    Hasil
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((result, index) => (
+                  <tr key={index}>
+                    <td className="border-2 border-gray-200 px-4 py-3">
+                      {result.label}
+                    </td>
+                    <td className="border-2 border-gray-200 px-4 py-3">
+                      {result.furudh}
+                    </td>
+                    <td className="border-2 border-gray-200 px-4 py-3">
+                      Rp. {numeral(result.hasil).format("0,0")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
